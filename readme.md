@@ -6,9 +6,9 @@ Easy Loop is a simple Schoolloop extension that adds the ability to calculate gr
 
 How to Disable Extensions Temporarily: 
 
-1.) On your browser, click menu or the three bars that look like a hamburger
-2.) Select More tools > Extensions.
-3.) To turn off an extension, uncheck the Enabled box. Check the box to turn it on.
+1. On your browser, click menu or the three bars that look like a hamburger
+2. Select More tools > Extensions.
+3. To turn off an extension, uncheck the Enabled box. Check the box to turn it on.
 
 Easy Loop Features:  
 
