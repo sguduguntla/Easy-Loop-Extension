@@ -2,6 +2,8 @@ Easy Loop Extension for Schoolloop
 ================================
 An extension that enhances the schoolloop interface to allow easy grade calculation.
 
+Link: https://chrome.google.com/webstore/detail/easy-loop/kkhpoabcjhecnadcnkgldgpfbncbjfjj
+
 Easy Loop is a simple Schoolloop extension that adds the ability to calculate grades with realtime grade updates and a beautiful user interface. Before enabling this extension, please make sure that any similar schoolloop extensions are disabled since they may interfere with Easy Loop. 
 
 How to Disable Extensions Temporarily: 
