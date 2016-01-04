@@ -29,7 +29,9 @@ Please await further updates including a
  - Ability to delete existing categories, etc. 
  - Further appearance customization
 
-Email me at sguduguntla11@gmail.com for any questions, concerns, or comments. 
+Email me at sguduguntla11@gmail.com for any questions, concerns, or comments. Leave suggestions or report any issues at:
+
+https://github.com/sguduguntla/Easy-Loop-Extension/issues 
 
 Visit me at my personal website: 
 
