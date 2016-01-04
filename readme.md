@@ -44,3 +44,5 @@ https://github.com/sguduguntla.
 If your browser asks to "Load an unsafe script", don't hesitate to load the script as it is 100% safe and secured by Google servers. It will simply activate some realtime features that may not work if the script isn't loaded. 
 
 Privacy Policy: Please note that Easy Loop is 100% safe as it does not store any data and it ensures that all extracted info is deleted after the particular session. Login details, grades, etc. are not stored or accessible by Easy Loop thanks to the Google Chrome extension policies. This extension has no affiliation with the Schoolloop company. 
+
+Please feel free to leave reviews on the chrome web store. 
