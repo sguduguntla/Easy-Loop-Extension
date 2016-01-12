@@ -1,114 +1,92 @@
 var NUM_ASSIGNMENTS_ADDED = 0;
+var CALCULATOR_TYPE = 0; //0 is the "Add Assignment" Table and 1 is the Finals Grade Calculator
 
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
 $("head").append('<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>');
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">');
 
-
-var categoryArr = [];
-
-var categoryNodeList = document.querySelectorAll(".list_label_grey");
-
-var weightNodeList = document.querySelectorAll(".list_text");
-
-var categories = [];
-
-for (var i = 0; i < categoryNodeList.length; i++) {
-    categoryArr[i] = categoryNodeList[i].textContent;
-
-    categories.push({
-        name: categoryArr[i],
-        received: 0,
-        total: 0
-    });
-}
-
-//Getting Weightages of each category through their XPaths
-
-//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[3]/td[2]
-
-for (var k = 2; k < categoryArr.length + 2; k++) {
-    var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + k + ']/td[2]', document, null, XPathResult.ANY_TYPE, null);
-
-    var thisHeading = headings.iterateNext();
-
-    if (thisHeading) {
-
-        var weightage = thisHeading.textContent;
-
-        weightage = weightage.substring(0, weightage.length - 1);
-
-        categories[k - 2].weight = parseFloat(weightage);
-
-    } else {
-        alert("An error occurred. Please try again later.");
-    }
-}
-
-//Getting the score of each category through their XPaths
-
-//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[2]/td[3]
-
-for (var l = 2; l < categoryArr.length + 2; l++) {
-    var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + l + ']/td[3]', document, null, XPathResult.ANY_TYPE, null);
-
-    var thisHeading = headings.iterateNext();
-
-    if (thisHeading) {
-
-        var scorePercent = thisHeading.textContent;
-
-        scorePercent = scorePercent.substring(0, scorePercent.length - 1);
-
-        categories[l - 2].score = parseFloat(scorePercent);
-
-    } else {
-        alert("An error occurred. Please try again later.");
-    }
-}
+var categories = getAllCategoryObjects(); //Array of all category objects i.e. [{name: Assignment, weight: 30, score: 97.76}, {name: Tests, weight: 40, score: 98.87}]
 
 console.log(categories);
 
-var content = '<div id="insertedContent" ng-app = ""><table id = "addTable" class="table table-bordered">';
-content += '<thead>';
-content += '<tr>';
-content += '<th>Category</th>';
-content += '<th>Assignment</th>';
-content += '<th>Grade</th>';
-content += '<th style="text-align: center;">Add</th>';
-content += '</tr>';
-content += '</thead>';
-content += '<tbody>';
-content += '<tr>';
-content += '<td>';
-content += '<select class="form-control" id="categoryDropdown">';
-content += '</select>';
-content += ' </td>';
-content += '<td>';
-content += '<input placeholder="Assignment Name" class="form-control" type="text" id="fieldName">';
-content += ' </td>';
-content += ' <td>';
-content += '<form class="form-inline">';
-content += '<div class="form-group">';
-content += '<input ng-model="first" type="number" class="form-control" style="width:80px;" id="gNum"/> / <input type="number" ng-model="second" class="form-control" style="width:80px;" id="gDen"/>';
-content += '<p ng-bind="(first / second) * 100"></p>%';
-content += '</div>';
-content += '</div>';
-content += '</td>';
-content += '<td>';
-content += '<a style="color: white; margin:0 auto; width: 100%;" class="btn btn-success" id="add" href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>';
-content += ' </td>';
-content += '</tr>';
-content += '</tbody>';
-content += '</table>';
+addAssignmentTableContent(CALCULATOR_TYPE); //Adds the "Add Assignment" Table UI to the top
 
-$(".content_spacing_sm").prepend(content);
-$(".content_spacing_sm").prepend("<div id='error' class='alert alert-danger' style='color: black'></div>");
-$("#error").css("display", "none");
-$(".content_spacing_sm").css("height", "auto");
-$(".content_spacing_sm").css("margin-top", "10px");
+updateCategoryOptions(); //Updates the categories dropdown with new categories
 
-updateCategoryOptions();
+changeCategoriesUI(); //Changes the categories box to a Boostrap striped table and adds buttons and errors UI
+
+addAssignmentDeleteButtons(); //Adds the delete column with buttons to all assignments
+
+addCategoryDeleteColumn(); //Adds the delete column with buttons to new categories
+
+function getAllCategoryObjects() {
+    var categoryArr = [];
+
+    var categoryNodeList = document.querySelectorAll(".list_label_grey");
+
+    var weightNodeList = document.querySelectorAll(".list_text");
+
+    var categories = [];
+
+    //Getting category names
+
+    for (var i = 0; i < categoryNodeList.length; i++) {
+        categoryArr[i] = categoryNodeList[i].textContent;
+
+        categories.push({
+            name: categoryArr[i],
+            received: 0,
+            total: 0
+        });
+    }
+
+    //Getting Weightages of each category through their XPaths
+
+    //*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[3]/td[2]
+
+    for (var k = 2; k < categoryArr.length + 2; k++) {
+        var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + k + ']/td[2]', document, null, XPathResult.ANY_TYPE, null);
+
+        var thisHeading = headings.iterateNext();
+
+        if (thisHeading) {
+
+            var weightage = thisHeading.textContent;
+
+            weightage = weightage.substring(0, weightage.length - 1);
+
+            categories[k - 2].weight = parseFloat(weightage);
+
+        } else {
+            alert("An error occurred. Please try again later.");
+        }
+    }
+
+    //Getting the score of each category through their XPaths
+
+    //*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[2]/td[3]
+
+    for (var l = 2; l < categoryArr.length + 2; l++) {
+        var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + l + ']/td[3]', document, null, XPathResult.ANY_TYPE, null);
+
+        var thisHeading = headings.iterateNext();
+
+        if (thisHeading) {
+
+            var scorePercent = thisHeading.textContent;
+
+            scorePercent = scorePercent.substring(0, scorePercent.length - 1);
+
+            categories[l - 2].score = parseFloat(scorePercent);
+
+        } else {
+            alert("An error occurred. Please try again later.");
+        }
+    }
+
+    return categories; //Array of all category objects i.e. [{name: Assignment, weight: 30, score: 97.76}, {name: Tests, weight: 40, score: 98.87}]
+
+}
 
 function updateCategoryOptions() {
     $("#categoryDropdown").html("");
@@ -118,19 +96,143 @@ function updateCategoryOptions() {
     }
 }
 
-//Increasing width of categories container
+function addAssignmentTableContent(calc_type) {
+    var content = '<button style="margin-bottom: 10px" id="changeCalculator" class="btn btn-primary"></button><br/>';
+    if (calc_type == 0) {
+        content += '<div id="insertedContent" ng-app = ""><table id = "addTable" class="table table-bordered">';
+        content += '<thead>';
+        content += '<tr>';
+        content += '<th>Category</th>';
+        content += '<th>Assignment</th>';
+        content += '<th>Grade</th>';
+        content += '<th style="text-align: center;">Add</th>';
+        content += '</tr>';
+        content += '</thead>';
+        content += '<tbody>';
+        content += '<tr>';
+        content += '<td>';
+        content += '<select class="form-control" id="categoryDropdown">';
+        content += '</select>';
+        content += ' </td>';
+        content += '<td>';
+        content += '<input placeholder="Assignment Name" class="form-control" type="text" id="fieldName">';
+        content += ' </td>';
+        content += ' <td>';
+        content += '<form class="form-inline">';
+        content += '<div class="form-group">';
+        content += '<input ng-model="first" type="number" class="form-control" style="width:80px;" id="gNum"/> / <input type="number" ng-model="second" class="form-control" style="width:80px;" id="gDen"/>';
+        content += '<p ng-bind="(first / second) * 100"></p>%';
+        content += '</div>';
+        content += '</div>';
+        content += '</td>';
+        content += '<td>';
+        content += '<a style="color: white; margin:0 auto; width: 100%;" class="btn btn-success" id="add" href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>';
+        content += ' </td>';
+        content += '</tr>';
+        content += '</tbody>';
+        content += '</table>';
+    } else {
+        content += '<div id="insertedContent" ng-app = ""><table id = "addTable" class="table table-bordered">';
+        content += '<thead>';
+        content += '<tr>';
+        content += '<th>Name</th>';
+        content += '<th>Desired Grade</th>';
+        content += '<th>Final Worth</th>';
+        content += '<th style="text-align: center;">Calculate</th>';
+        content += '</tr>';
+        content += '</thead>';
+        content += '<tbody>';
+        content += '<tr>';
+        content += '<td>';
+        content += '<p>Finals Grade Calculator</p>';
+        content += ' </td>';
+        content += '<td>';
+        content += '<input placeholder="Desired Grade (i.e. 97)" class="form-control" type="number" id="desiredGrade">';
+        content += ' </td>';
+        content += ' <td>';
+        content += '<input type="number" placeholder="Final is worth... (i.e. 30)" class="form-control" id="finalWorth"/> %';
+        content += '</td>';
+        content += '<td>';
+        content += '<a style="color: white; margin:0 auto; width: 100%;" class="btn btn-success" id="calculateFinals" href="#">Calculate</a>';
+        content += ' </td>';
+        content += '</tr>';
+        content += '</tbody>';
+        content += '</table>';
+    }
 
-$("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3)").css("width", "350px");
+    $(".content_spacing_sm").html("");
+    $(".content_spacing_sm").prepend(content);
+    $(".content_spacing_sm").prepend("<div id='error' class='alert alert-danger' style='color: black'></div>");
+    $("#error").css("display", "none");
+    $(".content_spacing_sm").css("height", "auto");
+    $(".content_spacing_sm").css("margin-top", "10px");
 
-//Adding error area at the top of categories container
+    if (calc_type == 0) {
+        $("#changeCalculator").html("Finals Grade Calculator");
+    } else {
+        $("#changeCalculator").html("Add Assignment");
+    }
 
-$("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content").prepend("<div id='catError' class='alert alert-danger' style='color: black'></div>");
-$("#catError").css("display", "none");
+}
 
-//Add Category Button
+$(".content_spacing_sm").on('click', '#calculateFinals', function(e) {
+    var desiredGrade = parseFloat($("#desiredGrade").val());
 
-$(".info_content").prepend('<a style="color: white; height: 30px;" class="btn btn-primary btn-sm" id="addCategory" href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a><a style="color: white; height: 30px; margin-left: 10px" class="btn btn-success btn-sm" id="updateCategories" href="#">Update</a><br>');
-$("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table").addClass("table table-striped table-bordered");
+    var finalWorth = parseFloat($("#finalWorth").val());
+
+    var receivedGradeString = $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(4)").html();
+    var receivedGrade = parseFloat(receivedGradeString.substring(0, receivedGradeString.length - 1));
+
+    if (!isNaN(desiredGrade) && !isNaN(finalWorth) && !isNaN(receivedGrade)) {
+
+        var gradeNeeded = ((100 * desiredGrade) - ((100 - finalWorth) * receivedGrade)) / finalWorth;
+
+        $("#error").html("You need " + roundNumber(gradeNeeded, 2) + "% on your final to get an overall grade of " + desiredGrade + "%.");
+        $("#error").removeClass("alert-danger");
+        $("#error").addClass("alert-success");
+        $("#error").css("display", "block");
+
+    } else {
+        $("#error").html("Please fill all fields.");
+        $("#error").removeClass("alert-success");
+        $("#error").addClass("alert-danger");
+        $("#error").css("display", "block");
+    }
+
+});
+
+
+$(".content_spacing_sm").on('click', '#changeCalculator', function(e) {
+    e.preventDefault();
+
+    if (CALCULATOR_TYPE == 0) {
+        CALCULATOR_TYPE++;
+        addAssignmentTableContent(CALCULATOR_TYPE);
+    } else {
+        CALCULATOR_TYPE--;
+        addAssignmentTableContent(CALCULATOR_TYPE);
+        updateCategoryOptions();
+    }
+
+});
+
+
+function changeCategoriesUI() {
+    //Increasing width of categories container
+
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3)").css("width", "350px");
+
+    //Adding error area at the top of categories container
+
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content").prepend("<div id='catError' class='alert alert-danger' style='color: black'></div>");
+    $("#catError").css("display", "none");
+
+    //Add Category Button
+
+    $(".info_content").prepend('<a style="color: white; height: 30px;" class="btn btn-primary btn-sm" id="addCategory" href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a><a style="color: white; height: 30px; margin-left: 10px" class="btn btn-success btn-sm" id="updateCategories" href="#">Update</a><br>');
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table").addClass("table table-striped table-bordered");
+
+}
 
 $("#addCategory").click(function(e) {
     e.preventDefault();
@@ -230,7 +332,7 @@ $("#updateCategories").click(function(e) {
 
 });
 
-$("#add").click(function(e) {
+$(".content_spacing_sm").on('click', '#add', function(e) {
     e.preventDefault();
 
     $("#error").css("display", "none");
@@ -286,13 +388,12 @@ $("#add").click(function(e) {
         });
     } else {
         $("#error").css("display", "block");
+        $("#error").removeClass("alert-success");
+        $("#error").addClass("alert-danger");
         $("#error").html("Please fill all the fields.");
     }
 
 });
-
-addAssignmentDeleteButtons();
-addCategoryDeleteColumn();
 
 $(".deleteRow").click(function(e) {
     e.preventDefault();
@@ -300,8 +401,6 @@ $(".deleteRow").click(function(e) {
         $(this).remove();
         calculateFinalGrade();
     });
-
-
 });
 
 function addAssignmentDeleteButtons() {
@@ -373,6 +472,8 @@ function calculateFinalGrade() {
 
         } else {
             $("#error").css("display", "block");
+            $("#error").removeClass("alert-success");
+            $("#error").addClass("alert-danger");
             $("#error").html("An error occurred. Please try again later.");
         }
 
@@ -393,7 +494,7 @@ function calculateFinalGrade() {
 
                 receivedTotal = receivedTotal.substring(colonIndex + 1, receivedTotal.length);
 
-                if (receivedTotal.trim().replace(/[\x00-\x1F\x7F-\x9F]/g, "") != "") { //Gets rid of all invisible characters
+                if (receivedTotal.trim().replace(/[\x00-\x1F\x7F-\x9F]/g, "") != "" && !isNaN(receivedTotal.trim().replace(/[\x00-\x1F\x7F-\x9F]/g, ""))) { //Gets rid of all invisible characters
                     totalReceivedPoints += parseFloat(receivedTotal);
                 } else {
                     receivedTotal = "0";
@@ -405,6 +506,8 @@ function calculateFinalGrade() {
 
         } else {
             $("#error").css("display", "block");
+            $("#error").removeClass("alert-success");
+            $("#error").addClass("alert-danger");
             $("#error").html("An error occurred. Please try again later.");
         }
 
@@ -435,6 +538,8 @@ function calculateFinalGrade() {
                 } else {
                     if (count > categories.length) {
                         $("#error").css("display", "block");
+                        $("#error").removeClass("alert-success");
+                        $("#error").addClass("alert-danger");
                         $("#error").html("An error occurred. Please try again later.");
                     }
                 }
@@ -472,6 +577,20 @@ function calculateFinalGrade() {
     }, 500);
 
     //Setting the final letter grade
+    var letter = getLetterGrade(total);
+
+    $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").html(letter);
+    $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").addClass("animated bounceIn");
+    setTimeout(function() {
+        $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").removeClass("animated bounceIn");
+    }, 500);
+
+    console.log("Total: " + roundNumber(total, 2));
+
+    return roundNumber(total, 2);
+}
+
+function getLetterGrade(total) {
     var letter = "A";
 
     if (total >= 97) {
@@ -502,15 +621,7 @@ function calculateFinalGrade() {
         letter = "F";
     }
 
-    $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").html(letter);
-    $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").addClass("animated bounceIn");
-    setTimeout(function() {
-        $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").removeClass("animated bounceIn");
-    }, 500);
-
-    console.log("Total: " + roundNumber(total, 2));
-
-    return roundNumber(total, 2);
+    return letter;
 }
 
 function setCorrectCategoryWeights() {
@@ -531,13 +642,13 @@ function getTotalWeightOfCategories() {
     var totalWeight = 0;
 
     for (var j = 0; j < categories.length; j++) {
-    	  var weightage = $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(' + (j + 2) + ') > td:nth-child(3)').html();
-    	 
-    	  weightage = weightage.substring(0, weightage.length - 1);
+        var weightage = $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(' + (j + 2) + ') > td:nth-child(3)').html();
 
-    	  categories[j].weight = parseFloat(weightage);
+        weightage = weightage.substring(0, weightage.length - 1);
+
+        categories[j].weight = parseFloat(weightage);
     }
-  
+
 
     for (var i = 0; i < categories.length; i++) {
         //alert(categories[i].weight);
@@ -556,7 +667,7 @@ function getDateToday() {
 
     var d = new Date();
 
-    var today = d.getMonth() + 1 + "/" + d.getDate() + "/" + d.getFullYear();
+    var today = d.getMonth() + 1 + "/" + d.getDate() + "/" + d.getFullYear().toString().substring(2);
 
     return today;
 }
