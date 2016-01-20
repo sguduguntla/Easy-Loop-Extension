@@ -1,5 +1,6 @@
 var NUM_ASSIGNMENTS_ADDED = 0;
 var CALCULATOR_TYPE = 0; //0 is the "Add Assignment" Table and 1 is the Finals Grade Calculator
+var NEW_CATEGORIES = 0;
 
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
 $("head").append('<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>');
@@ -45,6 +46,7 @@ function getAllCategoryObjects() {
     //*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[3]/td[2]
 
     for (var k = 2; k < categoryArr.length + 2; k++) {
+        //Without Zeroes Box
         var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + k + ']/td[2]', document, null, XPathResult.ANY_TYPE, null);
 
         var thisHeading = headings.iterateNext();
@@ -58,7 +60,21 @@ function getAllCategoryObjects() {
             categories[k - 2].weight = parseFloat(weightage);
 
         } else {
-            alert("An error occurred. Please try again later.");
+            //With Zeroes Box
+            headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[5]/div[1]/table/tbody/tr[' + k + ']/td[2]', document, null, XPathResult.ANY_TYPE, null);
+            thisHeading = headings.iterateNext();
+
+            if (thisHeading) {
+                var weightage = thisHeading.textContent;
+
+                weightage = weightage.substring(0, weightage.length - 1);
+
+                categories[k - 2].weight = parseFloat(weightage);
+            } else {
+                //No matter what
+                alert("An error occurred. Please try again later.");
+            }
+
         }
     }
 
@@ -67,6 +83,7 @@ function getAllCategoryObjects() {
     //*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[2]/td[3]
 
     for (var l = 2; l < categoryArr.length + 2; l++) {
+        //If zeroes box doesn't exist
         var headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[3]/div[1]/table/tbody/tr[' + l + ']/td[3]', document, null, XPathResult.ANY_TYPE, null);
 
         var thisHeading = headings.iterateNext();
@@ -80,7 +97,23 @@ function getAllCategoryObjects() {
             categories[l - 2].score = parseFloat(scorePercent);
 
         } else {
-            alert("An error occurred. Please try again later.");
+            //If zeroes box exists
+            headings = document.evaluate('//*[@id="container_content"]/div[2]/table[2]/tbody/tr/td[2]/div[5]/div[1]/table/tbody/tr[' + l + ']/td[3]', document, null, XPathResult.ANY_TYPE, null);
+
+            var thisHeading = headings.iterateNext();
+
+            if (thisHeading) {
+
+                var scorePercent = thisHeading.textContent;
+
+                scorePercent = scorePercent.substring(0, scorePercent.length - 1);
+
+                categories[l - 2].score = parseFloat(scorePercent);
+
+            } else {
+                alert("An error occurred. Please try again later.");
+            }
+
         }
     }
 
@@ -218,19 +251,33 @@ $(".content_spacing_sm").on('click', '#changeCalculator', function(e) {
 
 
 function changeCategoriesUI() {
-    //Increasing width of categories container
 
-    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3)").css("width", "350px");
+    var categoryTable = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table").html();
+
+    var nth_child = 3;
+
+    if (categoryTable != undefined) {
+        //If zero box doesn't exist
+        nth_child = 3;
+    } else {
+        //If zero box does exist
+        nth_child = 5;
+    }
+
+    //Increasing width of categories container
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ")").css("width", "350px");
 
     //Adding error area at the top of categories container
 
-    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content").prepend("<div id='catError' class='alert alert-danger' style='color: black'></div>");
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > div.module_content").prepend("<div id='catError' class='alert alert-danger' style='color: black'></div>");
     $("#catError").css("display", "none");
 
     //Add Category Button
 
+    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > div.module_content > table").addClass("table table-striped table-bordered");
+
+
     $(".info_content").prepend('<a style="color: white; height: 30px;" class="btn btn-primary btn-sm" id="addCategory" href="#"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a><a style="color: white; height: 30px; margin-left: 10px" class="btn btn-success btn-sm" id="updateCategories" href="#">Update</a><br>');
-    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table").addClass("table table-striped table-bordered");
 
 }
 
@@ -238,21 +285,33 @@ $("#addCategory").click(function(e) {
     e.preventDefault();
     var totalWeight = getTotalWeightOfCategories();
 
+    NEW_CATEGORIES++;
+
     if (totalWeight < 100) {
         var categoryContent = '<tr class="animated rollIn newCategory">';
         categoryContent += '<td><a style="color: white; border-radius: 150px;" class="btn btn-danger btn-sm deleteCatRow" href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>';
-        categoryContent += '<td class="list_label_grey categoryNameTd" width="100%"><input type="text" style="height: 30px; width: 85%;" class="form-control newCategoryName"/></td>';
-        categoryContent += '<td class="list_text categoryWeightTd" nowrap=""><input type="number" style="height: 30px; width: 95%;" class="form-control newCategoryWeight"/>%</td>';
+        categoryContent += '<td class="list_label_grey categoryNameTd' + NEW_CATEGORIES + '" width="100%"><input type="text" style="height: 30px; width: 85%;" class="form-control newCategoryName' + NEW_CATEGORIES + '"/></td>';
+        categoryContent += '<td class="list_text categoryWeightTd' + NEW_CATEGORIES + '" nowrap=""><input type="number" style="height: 30px; width: 95%;" class="form-control newCategoryWeight' + NEW_CATEGORIES + '"/>%</td>';
         categoryContent += '<td class="list_text categoryGrade" nowrap>100%</td>';
         categoryContent += '</tr>';
 
-        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").append(categoryContent);
+        var categoryTableBody = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").html();
+
+        if (categoryTableBody != undefined) {
+            //If zero box doesn't exist
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").append(categoryContent);
+        } else {
+            //If zero box doesn't exist
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody").append(categoryContent);
+        }
+
     } else {
         $("#catError").css("display", "block");
         $("#catError").html("All weightages add up to 100%. You may not add more categories.");
     }
     $(".deleteCatRow").click(function(e) {
         e.preventDefault();
+        NEW_CATEGORIES--;
         var catName = $(this).parent().parent().children().eq(1).text();
         for (var i = 0; i < categories.length; i++) {
             if (categories[i].name == catName) {
@@ -302,27 +361,39 @@ $("#updateCategories").click(function(e) {
     var totalWeight = getTotalWeightOfCategories();
     console.log(categories);
     console.log("Weight: " + totalWeight);
-    var enteredName = $(".newCategoryName").val();
-    var enteredWeight = $(".newCategoryWeight").val();
 
-    if ((totalWeight + parseFloat(enteredWeight)) <= 100) {
-        if (enteredName.trim() != "" && enteredWeight.toString().trim() != "") {
-            $(".categoryNameTd").html(enteredName);
-            $(".categoryWeightTd").html(parseFloat(enteredWeight) + "%");
-            $(".newCategory").removeClass("rollIn");
-            $(".newCategory").addClass("fadeIn");
-            categories.push({
-                name: enteredName,
-                weight: parseFloat(enteredWeight),
-                received: 0,
-                total: 0,
-                score: 100
-            });
-            updateCategoryOptions();
-            calculateFinalGrade();
-        } else {
-            $("#catError").css("display", "block");
-            $("#catError").html("Please fill all fields.");
+    var totalEnteredWeight = 0;
+
+    for (var i = 1; i <= NEW_CATEGORIES; i++) {
+
+        var enteredWeight = $(".newCategoryWeight" + i).val();
+        totalEnteredWeight += parseFloat(enteredWeight);
+
+    }
+
+    if (totalEnteredWeight <= 100) {
+        for (var j = 1; j <= NEW_CATEGORIES; j++) {
+            var enteredName = $(".newCategoryName" + j).val();
+
+            if (enteredName.trim() != "") {
+                $(".categoryNameTd" + j).html(enteredName);
+                $(".categoryWeightTd" + j).html(parseFloat(enteredWeight) + "%");
+                $(".newCategory").removeClass("rollIn");
+                $(".newCategory").addClass("fadeIn");
+                categories.push({
+                    name: enteredName,
+                    weight: parseFloat(enteredWeight),
+                    received: 0,
+                    total: 0,
+                    score: 100
+                });
+                updateCategoryOptions();
+                calculateFinalGrade();
+            } else {
+                $("#catError").css("display", "block");
+                $("#catError").html("Please fill all fields.");
+            }
+
         }
     } else {
         $("#catError").css("display", "block");
@@ -418,19 +489,31 @@ function addAssignmentDeleteButtons() {
 }
 
 function addCategoryDeleteColumn() {
-    var numRows = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table tr").length;
+    var categoryTableTr = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table tr").html();
 
-    //Header
+    var numRows = 0;
 
-    $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(1)").prepend("<td class='list_label' nowrap></td>");
+    if (categoryTableTr != undefined) {
+        //If zero box doesn't exist
+        numRows = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table tr").length;
+        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(1)").prepend("<td class='list_label' nowrap></td>");
 
-    for (var i = 2; i <= numRows; i++) {
-        //Each Row
-        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + i + ")").prepend('<td></td>');
+        for (var i = 2; i <= numRows; i++) {
+            //Each Row
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + i + ")").prepend('<td></td>');
+        }
+    } else {
+        //If zero box doesn't exist
+        numRows = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table tr").length;
+        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(1)").prepend("<td class='list_label' nowrap></td>");
+
+        for (var i = 2; i <= numRows; i++) {
+            //Each Row
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(" + i + ")").prepend('<td></td>');
+        }
     }
+
 }
-
-
 
 function calculateFinalGrade() {
 
@@ -560,12 +643,21 @@ function calculateFinalGrade() {
         total += categories[r - 1].score * (categories[r - 1].weight / 100);
 
         //Setting each category percentage
-        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").html("" + roundNumber(categories[r - 1].score, 2) + "%");
+        var categoryScoreArea = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").html();
 
-        $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").addClass("animated bounceIn");
-        setTimeout(function() {
-            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").removeClass("animated bounceIn");
-        }, 500);
+        if (categoryScoreArea != undefined) {
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").html("" + roundNumber(categories[r - 1].score, 2) + "%");
+            $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").addClass("animated bounceIn");
+            setTimeout(function() {
+                $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 1) + ") > td:nth-child(4)").removeClass("animated bounceIn");
+            }, 500);
+        } else {
+            $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 1) + ') > td:nth-child(4)').html("" + roundNumber(categories[r - 1].score, 2) + "%");
+            $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 1) + ') > td:nth-child(4)').addClass("animated bounceIn");
+            setTimeout(function() {
+                $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 1) + ') > td:nth-child(4)').removeClass("animated bounceIn");
+            }, 500);
+        }
 
     }
 
@@ -643,10 +735,19 @@ function getTotalWeightOfCategories() {
 
     for (var j = 0; j < categories.length; j++) {
         var weightage = $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(' + (j + 2) + ') > td:nth-child(3)').html();
+        if (weightage != undefined) {
+            //If zero box doesn't exist
+            weightage = weightage.substring(0, weightage.length - 1);
 
-        weightage = weightage.substring(0, weightage.length - 1);
+            categories[j].weight = parseFloat(weightage);
+        } else {
+            //If zero box exists
+            weightage = $('#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (j + 2) + ') > td:nth-child(3)').html();
 
-        categories[j].weight = parseFloat(weightage);
+            weightage = weightage.substring(0, weightage.length - 1);
+
+            categories[j].weight = parseFloat(weightage);
+        }
     }
 
 
