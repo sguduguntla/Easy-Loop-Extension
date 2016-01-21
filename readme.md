@@ -17,7 +17,7 @@ Easy Loop Features:
  - Add and delete assignments
  - Add new weightage categories
  - Calculate final and category grades within seconds, etc.
- - Calculate final and category grades within seconds, etc.
+ - Finals Grade Calculator! (new)
  - Enhance the visual appearance of their Schoolloop 
 
 Easy Loop will provide you the features that only your teachers are essentially permitted. Therefore, be your teacher today and calculate your grade within seconds! 
