@@ -1,0 +1,206 @@
+@font-face {
+  font-family: "lightHelvetica";
+  src: url(../resources/HelveticaNeue-UltraLight.ttf);
+}
+@font-face {
+  font-family: "thinHelvetica";
+  src: url(../resources/HelveticaNeue-Thin.ttf);
+}
+@font-face {
+  font-family: "boldHelvetica";
+  src: url(../resources/HelveticaNeue-Bold.ttf);
+}
+html, body {
+  height: 100%;
+  font-family: "thinHelvetica", "lightHelvetica", "Helvetica Neue", "Source Sans Pro", "Open Sans", "Arial", sans-serif !important;
+  font-weight: 100;
+  color: #FFF;
+  width: 100%;
+}
+body {
+  overflow-x: hidden;
+}
+.menuBtn {
+  position: fixed;
+  z-index: 100;
+  margin-left: 2em;
+  margin-top: -5em;
+  background-color: #207cca;
+  behavior: url(PIE.htc);
+  color: #FFF;
+  width: 4em;
+  height: 4em;
+  border: none;
+}
+a {
+  text-decoration: none !important;
+}
+
+.circle {
+  border-radius: 50%;
+}
+.iconContainer {
+  width: 200px;
+  height: 200px;
+  background-color: #FFF;
+  border: 1px solid #dbdbdb;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 100;
+  font-family: "lightHelvetica";
+}
+
+.mainTitle {
+  font-size: 8vmin;
+}
+
+.actionBtn {
+  width: 125px;
+  height: 64px;
+  margin-top: 5.7vh;
+  font-size: 1.2em;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: transparent;
+  -webkit-transition: background-color 0.5s ease;
+  /* Safari */
+  transition: background-color 0.5s ease;
+  border-color: #FFF;
+  font-weight: 100;
+}
+
+.btn-primary:hover {
+  color: black;
+  background-color: #FFF;
+}
+
+.btn-inverse {
+  color: black;
+  background-color: #FFF;
+  border-color: black;
+}
+
+.btn-inverse:hover {
+  color: white;
+  background-color: black;
+  -webkit-transition: background-color 0.5s ease;
+  /* Safari */
+  transition: background-color 0.5s ease;
+}
+
+a .scrollArrow {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  z-index: 1000;
+  color: black;
+  border-left: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  -webkit-animation: sdb04 1s infinite;
+  animation: sdb04 1s infinite;
+  box-sizing: border-box;
+  margin-top: 7vh;
+}
+
+@-webkit-keyframes sdb04 {
+  0% {
+    -webkit-transform: rotate(-45deg) translate(0, 0);
+  }
+  20% {
+    -webkit-transform: rotate(-45deg) translate(-10px, 10px);
+  }
+  40% {
+    -webkit-transform: rotate(-45deg) translate(0, 0);
+  }
+}
+@keyframes sdb04 {
+  0% {
+    transform: rotate(-45deg) translate(0, 0);
+  }
+  20% {
+    transform: rotate(-45deg) translate(-10px, 10px);
+  }
+  40% {
+    transform: rotate(-45deg) translate(0, 0);
+  }
+}
+.outerDiv {
+  width: 100%;
+}
+.footer {
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  line-height: 20vmin;
+  vertical-align: middle;
+}
+#sect1 {
+  padding-bottom: 7vh;
+}
+.gradientBackground {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#207cca+51 */
+  background: #207cca;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #207cca 51%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #207cca 51%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #207cca 51%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#207cca', endColorstr='#207cca', GradientType=0);
+  /* IE6-9 */
+  color: white;
+}
+.flexslider {
+  width: 70%;
+  height: 70%;
+  border: none !important;
+  transform: translateX(-50%);
+}
+.slides li div {
+  text-align: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.slides li div span {
+  height: 100%;
+  color: #FFFFFF;
+  font-size: 30px;
+  text-transform: uppercase;
+  -webkit-box-shadow: 40px 0 0 rgba(0, 0, 0, 0.5), -40px 0 0 rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 40px 0 0 rgba(0, 0, 0, 0.5), -40px 0 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 40px 0 0 rgba(0, 0, 0, 0.5), -40px 0 0 rgba(0, 0, 0, 0.5);
+}
+.slides li div span:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+.whiteBackground {
+  background-color: #FFF;
+  color: black;
+  box-shadow: 300px 100px 100px black;
+}
+.feature:hover {
+  background-color: #207cca;
+  color: white;
+  border: 1px solid #207cca;
+  transition: background-color 0.4s ease;
+}
+.grayBackground {
+  background-color: #f9f8f8;
+  color: black;
+}
+.sect {
+  padding: 3vw;
+  font-size: 1.2em;
+  font-weight: 200;
+}
