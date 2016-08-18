@@ -1,5 +1,8 @@
 Easy Loop Extension for Schoolloop
 ================================
+
+![alt tag](https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-1280x800.png)
+
 An extension that enhances the schoolloop interface to allow easy grade calculation.
 
 Promo Link: http://www.sriharshaguduguntla.com/easyloop  
