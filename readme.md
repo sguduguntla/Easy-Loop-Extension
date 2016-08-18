@@ -21,6 +21,7 @@ Easy Loop 2.0 Features:
  - Add new weightage categories
  - Calculate final and category grades within seconds, etc.
  - Finals Grade Calculator
+ - Enable & Disable Easy Loop (New!)
  - Calculate grades for classes without categories (New!)
  - Sort grades by category, score, etc. (New!)
  - Visual customization (New!)
