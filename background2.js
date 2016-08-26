@@ -1,5 +1,58 @@
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
 
+/*
+if (localStorage.getItem("gradesPublished") === null) {
+  localStorage.setItem("gradesPublished", "false");
+}
+
+var jqueryDialog = '<div style="display: none;" class="animated fadeIn" id="dialog-confirm" title="Easy Loop">';
+jqueryDialog += '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><span id="myMessage">No grades published. Please wait until grades are entered into the gradebook.</span></p>';
+jqueryDialog += '<div class="checkbox">';
+jqueryDialog += '<label><input id="showMessage" type="checkbox" value="">Don\'t show this message again</label>';
+jqueryDialog += '</div>'
+jqueryDialog += '</div>';
+
+$("body").prepend(jqueryDialog);
+
+if ($(".label_light")) {
+  alert($(".label_light").length);
+  console.log($("table.student_row")[5]);
+  alert(("table.student_row").length);
+  if ($(".label_light").length != $(".student_row").length) {
+    localStorage.setItem("gradesPublished", "true");
+  }
+} else {
+  localStorage.setItem("gradesPublished", "true");
+}
+
+
+if (localStorage.getItem("gradesPublished") == "false") {
+  $("#myMessage").html("No grades published. Please wait until grades are entered into the gradebook.");
+} else {
+  $("#myMessage").html("You have grades in your gradebook.");
+}
+
+$("#dialog-confirm").dialog({
+  resizable: false,
+  height: "auto",
+  width: 400,
+  modal: true,
+  buttons: {
+    Close: function() {
+      if ($("#showMessage").is(':checked')) {
+        localStorage.setItem("gradesPublished", "true");
+      } else {
+        localStorage.setItem("gradesPublished", "false");
+      }
+      $(this).dialog("close");
+    }
+  }
+});
+
+*/
+
+//Themes
+
 $("#page_title").css("margin-top", "20px"); //Adjust Page Title to be a bit lower
 
 var themeSelect = "<div class='module'>";
@@ -237,4 +290,43 @@ function applyTheme3() {
   $("#container_content > div.content_margin > div.home_left > div:nth-child(3)").css("background-color", lightGray);
   $(".cal_content_holder").css("background-color", "white");
 
+}
+
+//Initialize firebase
+
+try {
+  var config = {
+    apiKey: "AIzaSyC7GK5mrHwbvVWa90RSORQlyALWGrEB4Js",
+    authDomain: "easy-loop.firebaseapp.com",
+    databaseURL: "https://easy-loop.firebaseio.com",
+    storageBucket: "easy-loop.appspot.com",
+  };
+
+  firebase.initializeApp(config);
+
+  // Get a reference to the database service
+  var database = firebase.database();
+
+  var userNameRef = database.ref('userNames');
+
+  var userName = $("#page_title").text().replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
+
+  /*var portalIndex = userName.indexOf("Portal");
+
+  userName = userName.substring(0, portalIndex).trim();*/
+
+  var userExists = false;
+
+  userNameRef.once('value').then(function(snapshot) {
+    snapshot.forEach(function(snap) {
+      if (snap.A.B == userName) {
+        userExists = true;
+      }
+    });
+
+    if (userExists == false) userNameRef.push(userName);
+  });
+
+} catch (e) {
+  console.log("An error occured in Easy Loop. Please try again later or contact developer at sguduguntla11@gmail.com");
 }

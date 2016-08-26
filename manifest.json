@@ -11,6 +11,7 @@
     "activeTab",
     "tabs"
   ],
+  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://*.firebaseio-demo.com; object-src 'self'",
   "browser_action": {
     "name": "Make grade calculation easier!",
     "default_icon": "images/easyloop-logo.png",
@@ -22,7 +23,7 @@
     "matches": ["http://*.schoolloop.com/progress_report/*", "https://*.schoolloop.com/progress_report/*"]
   }, {
     "matches": ["https://*.schoolloop.com/portal/student_home"],
-    "css": ["customStyles.css", "animate.css"],
-    "js": ["jquery-1.11.3.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js", "background2.js"]
+    "css": ["customStyles.css", "animate.css", "jquery-ui.min.css", "jquery-ui.theme.min.css"],
+    "js": ["jquery-1.11.3.min.js", "jquery-ui.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js", "firebase.js", "background2.js"]
   }]
 }
