@@ -4,8 +4,8 @@ Easy Loop Chrome Extension for Schoolloop
 
 An extension that enhances the schoolloop interface to allow easy grade calculation.
 
-Promo Link: http://www.sriharshaguduguntla.com/easyloop  
-Direct Link: https://chrome.google.com/webstore/detail/easy-loop/kkhpoabcjhecnadcnkgldgpfbncbjfjj
+Website Link: http://www.sriharshaguduguntla.com/easyloop  
+Download Link: https://chrome.google.com/webstore/detail/easy-loop/kkhpoabcjhecnadcnkgldgpfbncbjfjj
 
 Easy Loop is a simple Schoolloop extension that adds the ability to calculate grades with realtime grade updates and a beautiful user interface. Before enabling this extension, please make sure that any similar schoolloop extensions are disabled since they may interfere with Easy Loop. 
 
@@ -49,4 +49,4 @@ https://github.com/sguduguntla.
 
 Privacy Policy: Please note that Easy Loop is 100% safe as it does not store any data and it ensures that all extracted info is deleted after the particular session. Login details, grades, etc. are not stored or accessible by Easy Loop thanks to the Google Chrome extension policies. This extension has no affiliation with the Schoolloop company. 
 
-Please feel free to leave reviews.
+Please feel free to leave reviews [here](https://chrome.google.com/webstore/detail/easy-loop/kkhpoabcjhecnadcnkgldgpfbncbjfjj/reviews)
