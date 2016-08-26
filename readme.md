@@ -1,4 +1,4 @@
-Easy Loop Extension for Schoolloop
+Easy Loop Chrome Extension for Schoolloop
 ================================
 <img src="https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png" width="460" height="340">
 
