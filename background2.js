@@ -1,6 +1,6 @@
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
 
-/*
+
 if (localStorage.getItem("gradesPublished") === null) {
   localStorage.setItem("gradesPublished", "false");
 }
@@ -15,41 +15,37 @@ jqueryDialog += '</div>';
 $("body").prepend(jqueryDialog);
 
 if ($(".label_light")) {
-  alert($(".label_light").length);
-  console.log($("table.student_row")[5]);
-  alert(("table.student_row").length);
-  if ($(".label_light").length != $(".student_row").length) {
+  if ($(".label_light").length != $(".student_row").length) { //label_light -> No Grades Published, student_row -> Grades published
     localStorage.setItem("gradesPublished", "true");
   }
 } else {
   localStorage.setItem("gradesPublished", "true");
 }
 
-
 if (localStorage.getItem("gradesPublished") == "false") {
-  $("#myMessage").html("No grades published. Please wait until grades are entered into the gradebook.");
+  $("#myMessage").html("Thanks for installing <a target='_blank' href='http://www.sriharshaguduguntla.com/easyloop'>Easy Loop</a>! There are currently no grades published. Please wait until grades are entered into the gradebook.");
 } else {
-  $("#myMessage").html("You have grades in your gradebook.");
+  $("#myMessage").html("Thanks for installing <a target='_blank' href='http://www.sriharshaguduguntla.com/easyloop'>Easy Loop</a>! You have grades published. Please access one of your progress reports to begin. Don't know where it is? Click <a target='_blank' href='https://slhps-help-ca.schoolloop.com/progressreport'>here</a>.");
 }
 
-$("#dialog-confirm").dialog({
-  resizable: false,
-  height: "auto",
-  width: 400,
-  modal: true,
-  buttons: {
-    Close: function() {
-      if ($("#showMessage").is(':checked')) {
-        localStorage.setItem("gradesPublished", "true");
-      } else {
-        localStorage.setItem("gradesPublished", "false");
+if (localStorage.getItem("showMessage") == "true" || localStorage.getItem("showMessage") === null) {
+  $("#dialog-confirm").dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    buttons: {
+      Close: function() {
+        if ($("#showMessage").is(':checked')) {
+          localStorage.setItem("showMessage", "false");
+        } else {
+          localStorage.setItem("showMessage", "true");
+        }
+        $(this).dialog("close");
       }
-      $(this).dialog("close");
     }
-  }
-});
-
-*/
+  });
+}
 
 //Themes
 
@@ -309,22 +305,30 @@ try {
 
   var userNameRef = database.ref('userNames');
 
+  var totalUsersRef = database.ref('totalUsers');
+
   var userName = $("#page_title").text().replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
-  /*var portalIndex = userName.indexOf("Portal");
+  var portalIndex = userName.indexOf("Portal");
 
-  userName = userName.substring(0, portalIndex).trim();*/
+  if (portalIndex != -1) {
+    userName = userName.substring(0, portalIndex).trim();
+  }
 
   var userExists = false;
 
   userNameRef.once('value').then(function(snapshot) {
     snapshot.forEach(function(snap) {
-      if (snap.A.B == userName) {
+      if (snapshot.val()[snap.key] == userName) {
         userExists = true;
       }
     });
 
-    if (userExists == false) userNameRef.push(userName);
+    totalUsersRef.set(Object.keys(snapshot.val()).length);
+
+    if (userExists == false) {
+      userNameRef.push(userName);
+    }
   });
 
 } catch (e) {

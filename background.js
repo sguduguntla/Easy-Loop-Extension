@@ -107,7 +107,7 @@ function startProgram() {
 
   }
 
-  $("<br/><br/><blockquote style='font-size: 1em; margin-bottom: -40px;'><div>Like <a style='color: #23527C;' target='_blank' href='http://176.32.230.17/sriharshaguduguntla.com/easyloop/'>Easy Loop</a> on <a style='color: #23527C;' target='_blank' href='https://facebook.com/schoolloopeasyloop'>Facebook</a>!</div><iframe src='https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fschoolloopeasyloop%2F&width=300&layout=standard&action=like&size=small&show_faces=false&share=true&height=40&appId=1155738174469383' width='450' height='20' style='border:none;overflow:hidden' scrolling='no' frameborder='0' allowTransparency='true'></iframe></blockquote>").insertAfter("#container_content > div.content_margin > h2"); //FB Like button
+  $("<br/><br/><blockquote style='font-size: 1em; margin-bottom: -40px;'><div>Like <a style='color: #23527C;' target='_blank' href='http://www.sriharshaguduguntla.com/easyloop/'>Easy Loop</a> on <a style='color: #23527C;' target='_blank' href='https://facebook.com/schoolloopeasyloop'>Facebook</a>!</div><iframe src='https://www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2Fschoolloopeasyloop%2F&width=300&layout=standard&action=like&size=small&show_faces=false&share=true&height=40&appId=1155738174469383' width='450' height='20' style='border:none;overflow:hidden' scrolling='no' frameborder='0' allowTransparency='true'></iframe></blockquote>").insertAfter("#container_content > div.content_margin > h2"); //FB Like button
 
   if (ZERO_TABLE_EXISTS) {
     showOrHideZeroTable();
