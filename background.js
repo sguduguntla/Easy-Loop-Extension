@@ -5,8 +5,20 @@ var ZERO_TABLE_EXISTS = false;
 var CATEGORY_TABLE_EXISTS = true;
 
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
-//$("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(2) > td:nth-child(2)").html("10%");
+
 var user = new User();
+
+var alertContent = '<div id="errorAlert" class="alert alert-danger">';
+alertContent += '<button onclick="$(\'#setAlert\').removeClass(); $(\'#errorAlert\').fadeOut();" type="button" class="close" aria-label="Close">';
+alertContent += '<span aria-hidden="true">&times;</span>';
+alertContent += '</button>';
+alertContent += '<span id="error"></span>';
+alertContent += '</div>';
+
+$(".content_spacing_sm").prepend(alertContent);
+$("#errorAlert").css("display", "none");
+$(".content_spacing_sm").css("height", "auto");
+$(".content_spacing_sm").css("margin-top", "10px");
 
 try {
   //Initializing FB Widget
@@ -72,13 +84,34 @@ try {
 
 } catch (err) {
   localStorage.setItem("enabledLoop", "false");
-  alert("Not able to receive grades at this time. Please try again later or contact developer at sguduguntla11@gmail.com.");
-  $(".content_spacing_sm").html("");
+  $("#errorAlert").fadeIn();
+  $("#errorAlert").removeClass();
+  $("#errorAlert").addClass("alert alert-danger");
+
+  $("#error").html("Not able to receive grades at this time. Recent changes in Schoolloop have caused the weightage column in the category box to not appear for students, and students <strong>must talk to their teacher in order to get this problem fixed</strong>. Otherwise, Easy Loop cannot calculate grades. Also, try again later or contact developer at sguduguntla11@gmail.com.");
+
+//  $(".content_spacing_sm").contents(':not(#errorAlert)').remove(); //Remove everything, but error box
+
+  var nth_child = 3;
+
+  if (ZERO_TABLE_EXISTS) {
+    nth_child = 5;
+  } else {
+    nth_child = 3;
+  }
+  var catAlertContent = '<div id="catAlert" class="alert alert-danger">';
+  catAlertContent += '<button onclick="$(\'#catAlert\').fadeOut();" type="button" class="close" aria-label="Close">';
+  catAlertContent += '<span aria-hidden="true">&times;</span>';
+  catAlertContent += '</button>';
+  catAlertContent += '<span id="catError">No weightage column found below. Easy Loop cannot calculate grades without weightages. <strong>Please talk to your teachers about this problem</strong>.</span>';
+  catAlertContent += '</div>';
+
+  $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > div.module_content").prepend(catAlertContent);
+
   throw err;
 }
 
 function startProgram() {
-
 
   $("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1)").append('<span class="list_text"><img src="https://cdn.schoolloop.com/1607081711/img/spacer.gif" width="10" height="13" alt="">Current Date: </span><span class="off">' + getDateToday() + ' ' + getCurrentTime() + '</span>');
   //$("#container_content > div.content_margin > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(1)").append('<span class="list_text"><img src="https://cdn.schoolloop.com/1607081711/img/spacer.gif" width="10" height="13" alt=""><button class="btn btn-default">Sort</button></span>');
@@ -368,7 +401,11 @@ function init() {
         user.insertCategory(categoryObject);
 
       } catch (err) {
-        alert("Not able to receive categories at this time. Please try again later.");
+        $("#errorAlert").fadeIn();
+        $("#errorAlert").removeClass();
+        $("#errorAlert").addClass("alert alert-danger");
+        $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
+
         throw err;
       }
 
@@ -472,18 +509,7 @@ function addAssignmentTableContent() {
     content += '</table>';
   }
 
-  $(".content_spacing_sm").html("");
-  $(".content_spacing_sm").prepend(content);
-  var alertContent = '<div id="errorAlert" class="alert alert-danger">';
-  alertContent += '<button onclick="$(\'#setAlert\').removeClass(); $(\'#errorAlert\').fadeOut();" type="button" class="close" aria-label="Close">';
-  alertContent += '<span aria-hidden="true">&times;</span>';
-  alertContent += '</button>';
-  alertContent += '<span id="error"></span>';
-  alertContent += '</div>';
-  $(".content_spacing_sm").prepend(alertContent);
-  $("#errorAlert").css("display", "none");
-  $(".content_spacing_sm").css("height", "auto");
-  $(".content_spacing_sm").css("margin-top", "10px");
+  $(".content_spacing_sm").append(content);
 
 }
 
@@ -516,6 +542,8 @@ $(".content_spacing_sm").on('click', '#calculateFinals', function(e) {
 
 $(".content_spacing_sm").on('change', '#changeCalculator', function() {
   var selectedMode = $("#changeCalculator").val();
+
+  $(".content_spacing_sm").contents(':not(#errorAlert)').remove(); //Remove everything, but error box
 
   if (selectedMode == "Finals Grade Calculator") {
     CALCULATOR_TYPE = "Finals Grade Calculator";
@@ -786,7 +814,7 @@ function hideOrShowGrades() {
   var gradesHidden = false;
 
   $(".hub_general > thead > tr").prepend("<th nowrap><a style='cursor: pointer;' id='hideGrades'>hide all</a></th>");
-//  $(".hub_general > thead > tr").prepend("<th nowrap><a style='cursor: pointer;'>#</a></th>");
+  //  $(".hub_general > thead > tr").prepend("<th nowrap><a style='cursor: pointer;'>#</a></th>");
 
   $("#hideGrades").click(function(e) {
     if (gradesHidden == false) {
@@ -865,7 +893,11 @@ function calculateFinalGrade() {
         categories[p].weight = weightPercent;
 
       } catch (err) {
-        alert("Not able to receive weights at this time. Please try again later.");
+        $("#errorAlert").fadeIn();
+        $("#errorAlert").removeClass();
+        $("#errorAlert").addClass("alert alert-danger");
+        $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
+
         throw err;
       }
     }
@@ -1089,7 +1121,11 @@ function getTotalWeightOfCategories() {
       totalWeight += weightPercent;
 
     } catch (err) {
-      alert("Not able to receive category weightages at this time. Please try again later.");
+      $("#errorAlert").fadeIn();
+      $("#errorAlert").removeClass();
+      $("#errorAlert").addClass("alert alert-danger");
+      $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
+
       throw err;
     }
 
