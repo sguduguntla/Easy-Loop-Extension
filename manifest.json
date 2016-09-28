@@ -8,8 +8,7 @@
     "scripts": ["back_script.js"]
   },
   "permissions": [
-    "activeTab",
-    "tabs"
+    "activeTab"
   ],
   "browser_action": {
     "name": "Make grade calculation easier!",
