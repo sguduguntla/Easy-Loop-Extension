@@ -1,7 +1,7 @@
 {
   "name": "School Loop Easy Loop",
   "short_name": "Easy Loop",
-  "version": "2.1.6.9",
+  "version": "2.1.7.2",
   "description": "An extension that enhances the schoolloop interface to allow easy grade calculation",
   "manifest_version": 2,
   "background": {

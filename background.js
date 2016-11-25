@@ -3,6 +3,7 @@ var CALCULATOR_TYPE = "Add Assignment"; //"Add Assignment" Table and "Finals Gra
 var NEW_CATEGORIES = 0;
 var ZERO_TABLE_EXISTS = false;
 var CATEGORY_TABLE_EXISTS = true;
+var WEIGHT_COLUMN_EXISTS = true;
 
 $("head").append('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">');
 
@@ -90,7 +91,7 @@ try {
 
   $("#error").html("Not able to receive grades at this time. Recent changes in Schoolloop have caused the weightage column in the category box to not appear for students, and students <strong>must talk to their teacher in order to get this problem fixed</strong>. Otherwise, Easy Loop cannot calculate grades. Also, try again later or contact developer at sguduguntla11@gmail.com.");
 
-//  $(".content_spacing_sm").contents(':not(#errorAlert)').remove(); //Remove everything, but error box
+  //  $(".content_spacing_sm").contents(':not(#errorAlert)').remove(); //Remove everything, but error box
 
   var nth_child = 3;
 
@@ -282,8 +283,8 @@ function sortByCategory() {
       } else {
         if (count > categories.length) {
           $("#errorAlert").fadeIn();
-          $("#errorAlert").removeClass("alert-success");
-          $("#errorAlert").addClass("alert-danger");
+          $("#errorAlert").removeClass();
+          $("#errorAlert").addClass("alert alert-danger");
           $("#error").html("An error occurred. Please try again later.");
         }
       }
@@ -331,10 +332,22 @@ function checkForCategoryTable() {
   }
 
   var categoryTable = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > h2").html().toLowerCase();
+  console.log("Category Table: " + categoryTable);
 
   if (categoryTable == "scores per category") {
-    //If category box does exist
-    CATEGORY_TABLE_EXISTS = true;
+
+    var numColumns = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > div.module_content > table > tbody > tr:nth-child(1) > td").length;
+
+    if (numColumns < 3) {
+      CATEGORY_TABLE_EXISTS = false;
+      $("#errorAlert").fadeIn();
+      $("#errorAlert").removeClass();
+      $("#errorAlert").addClass("alert alert-warning");
+      $("#error").html("<strong>Warning:</strong> No category weightages were found, so all calculations will be unweighted.");
+    } else {
+      //If category box does exist
+      CATEGORY_TABLE_EXISTS = true;
+    }
   } else {
     //If category box doesn't exist
     CATEGORY_TABLE_EXISTS = false;
@@ -353,11 +366,13 @@ function checkForZeroTable() {
     ZERO_TABLE_EXISTS = false;
   }
 
+  console.log("Zero Table: " + ZERO_TABLE_EXISTS)
+
 }
 
 function init() {
-
   if (CATEGORY_TABLE_EXISTS) {
+
 
     var categoryNodeList = $(".list_label_grey");
 
@@ -525,15 +540,15 @@ $(".content_spacing_sm").on('click', '#calculateFinals', function(e) {
     var gradeNeeded = ((100 * desiredGrade) - ((100 - finalWorth) * receivedGrade)) / finalWorth;
 
     $("#error").html("You need " + roundNumber(gradeNeeded, 2) + "% on your final to get an overall grade of " + desiredGrade + "%.");
-    $("#errorAlert").removeClass("alert-danger");
-    $("#errorAlert").addClass("alert-success");
+    $("#errorAlert").removeClass();
+    $("#errorAlert").addClass("alert alert-success");
     $("#errorAlert").fadeIn();
     $("#setAlert").removeClass();
 
   } catch (e) {
     $("#error").html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>  Please fill all the fields.');
-    $("#errorAlert").removeClass("alert-success");
-    $("#errorAlert").addClass("alert-danger");
+    $("#errorAlert").removeClass();
+    $("#errorAlert").addClass("alert alert-danger");
     $("#errorAlert").fadeIn();
     $("#setAlert").addClass("danger");
   }
@@ -748,7 +763,7 @@ $(".content_spacing_sm").on('click', '#add', function(e) {
   if (CATEGORY_TABLE_EXISTS) {
     rowContent += $("#categoryDropdown").val();
   } else {
-    rowContent += "Assignment";
+    rowContent += "Unweighted";
   }
   rowContent += ' <br>';
 
@@ -783,8 +798,8 @@ $(".content_spacing_sm").on('click', '#add', function(e) {
     });
   } else {
     $("#errorAlert").fadeIn();
-    $("#errorAlert").removeClass("alert-success");
-    $("#errorAlert").addClass("alert-danger");
+    $("#errorAlert").removeClass();
+    $("#errorAlert").addClass("alert alert-danger");
     $("#error").html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>  Please fill all the fields.');
     $("#setAlert").addClass("danger");
   }
@@ -793,7 +808,7 @@ $(".content_spacing_sm").on('click', '#add', function(e) {
 
 $(".deleteRow").click(function(e) {
   e.preventDefault();
-  $(this).parent().parent().fadeOut(100, function() {
+  $(this).parent().parent().fadeOut(300, function() {
     $(this).remove();
     calculateFinalGrade();
   });
@@ -950,7 +965,6 @@ function calculateFinalGrade() {
 
     if (CATEGORY_TABLE_EXISTS) {
       //Assignment Category
-
       var category = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_left > table > tbody > tr:nth-child(" + l + ") > td:nth-child(2) > div").html().trim();
 
       var count = 0;
@@ -962,11 +976,12 @@ function calculateFinalGrade() {
         var brIndex = category.indexOf("<br>");
 
         if (brIndex != -1) {
-          category = category.substring(0, brIndex).replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
+          category = decodeHTMLEntities(category.substring(0, brIndex).replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim());
         }
 
         if (category == categories[t].name) {
           categories[t].received += parseFloat(receivedTotal);
+          console.log(categories[t]);
 
           console.log(categories[t].name + ":" + receivedTotal + " / " + assignmentTotal);
 
@@ -980,8 +995,8 @@ function calculateFinalGrade() {
         } else {
           if (count > categories.length) {
             $("#errorAlert").fadeIn();
-            $("#errorAlert").removeClass("alert-success");
-            $("#errorAlert").addClass("alert-danger");
+            $("#errorAlert").removeClass();
+            $("#errorAlert").addClass("alert alert-danger");
             $("#error").html("An error occurred. Please try again later.");
           }
         }
@@ -1040,6 +1055,12 @@ function calculateFinalGrade() {
 
   return roundNumber(finalAnswer, 2);
 
+}
+
+function decodeHTMLEntities(str) {
+  var elem = document.createElement('textarea');
+  elem.innerHTML = str;
+  return elem.value;
 }
 
 function getLetterGrade(total) {
