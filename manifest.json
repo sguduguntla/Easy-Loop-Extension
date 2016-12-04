@@ -1,7 +1,7 @@
 {
   "name": "School Loop Easy Loop",
   "short_name": "Easy Loop",
-  "version": "2.1.7.2",
+  "version": "2.1.7.3",
   "description": "An extension that enhances the schoolloop interface to allow easy grade calculation",
   "manifest_version": 2,
   "background": {
@@ -10,6 +10,11 @@
   "permissions": [
     "activeTab"
   ],
+  "icons": {
+    "16": "images/easyloop-icon16.png",
+    "48": "images/easyloop-icon48.png",
+    "128": "images/easyloop-icon128.png"
+  },
   "browser_action": {
     "name": "Make grade calculation easier!",
     "default_icon": "images/easyloop-logo.png",
@@ -22,6 +27,6 @@
   }, {
     "matches": ["https://*.schoolloop.com/portal/student_home"],
     "css": ["customStyles.css", "animate.css", "jquery-ui.min.css", "jquery-ui.theme.min.css"],
-    "js": ["jquery-1.11.3.min.js", "jquery-ui.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js","background2.js"]
+    "js": ["jquery-1.11.3.min.js", "jquery-ui.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js", "background2.js"]
   }]
 }

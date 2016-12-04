@@ -85,9 +85,7 @@ try {
 
 } catch (err) {
   localStorage.setItem("enabledLoop", "false");
-  $("#errorAlert").fadeIn();
-  $("#errorAlert").removeClass();
-  $("#errorAlert").addClass("alert alert-danger");
+  $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
 
   $("#error").html("Not able to receive grades at this time. Recent changes in Schoolloop have caused the weightage column in the category box to not appear for students, and students <strong>must talk to their teacher in order to get this problem fixed</strong>. Otherwise, Easy Loop cannot calculate grades. Also, try again later or contact developer at sguduguntla11@gmail.com.");
 
@@ -147,6 +145,102 @@ function startProgram() {
     showOrHideZeroTable();
   }
 
+  gradeBreakDownModal();
+
+}
+
+function gradeBreakDownModal() {
+  var info = populateCategoryInfo();
+
+  var totalPoints = info[0];
+  var totalReceivedPoints = info[1];
+
+  var categories = user.getAllCategories();
+
+  var gradeBreakDownModal = '<div id="myModal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">';
+  gradeBreakDownModal += '<div class="modal-dialog modal-lg" role="document">';
+  gradeBreakDownModal += '<div class="modal-content">';
+  gradeBreakDownModal += '<div class="modal-header">';
+  gradeBreakDownModal += '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+  gradeBreakDownModal += '<h4 class="modal-title">Your Grade Breakdown</h4>';
+  gradeBreakDownModal += '</div>';
+  gradeBreakDownModal += '<div class="modal-body">';
+  if (CATEGORY_TABLE_EXISTS) {
+    gradeBreakDownModal += '<h4>Category Breakdown</h4><hr/>';
+    gradeBreakDownModal += '<table id="categoryBreakdownTable" class="table table-hover text-center">';
+    gradeBreakDownModal += '<thead>';
+    gradeBreakDownModal += '<tr>';
+    gradeBreakDownModal += '<th class="text-center">Category</th><th class="text-center">Weightage</th><th class="text-center">Score</th><th class="text-center">Received (pts)</th><th class="text-center">Extra Credit (pts)</th><th class="text-center">Total (pts)</th>';
+    gradeBreakDownModal += '</tr></thead>';
+    gradeBreakDownModal += '<tbody>';
+    for (var i = 0; i < categories.length; i++) {
+      gradeBreakDownModal += '<tr>';
+      gradeBreakDownModal += '<td>' + categories[i].name + '</td><td>' + categories[i].weight + '%</td><td><mark>' + categories[i].score + '%<mark></td><td>' + categories[i].received + '</td><td>' + categories[i].extra_credit + '</td><td>' + categories[i].total + '</td>';
+      gradeBreakDownModal += '</tr>';
+    }
+    gradeBreakDownModal += '</tbody>';
+    gradeBreakDownModal += '</table>';
+  } else {
+    gradeBreakDownModal += '<h4>Unweighted Grade Breakdown</h4><hr/>';
+    gradeBreakDownModal += "<h5><strong>Received: </strong>" + totalReceivedPoints + " pts</h5>";
+    gradeBreakDownModal += "<h5><strong>Total: </strong>" + totalPoints + " pts</h5>";
+    gradeBreakDownModal += "<h5><strong>Final Score: </strong>(" + totalReceivedPoints + " / " + totalPoints + ") * 100 = <mark><strong>" + roundNumber((totalReceivedPoints / totalPoints) * 100, 2) + "%</strong></mark></h5>";
+  }
+  if (ZERO_TABLE_EXISTS) {
+    gradeBreakDownModal += '<hr/><h4>Zeroes</h4><hr/>';
+    gradeBreakDownModal += '<table id="zeroBreakdownTable" class="table table-hover text-center">';
+    gradeBreakDownModal += '<thead>';
+    gradeBreakDownModal += '<tr>';
+    gradeBreakDownModal += '<th class="text-center">Category</th><th class="text-center">Date</th><th class="text-center">Assignment Name</th><th class="text-center">Received (pts)</th><th class="text-center">Total (pts)</th>';
+    gradeBreakDownModal += '</tr></thead>';
+    gradeBreakDownModal += '<tbody>';
+    for (var i = 0; i < categories.length; i++) {
+      for (var j = 0; j < categories[i].zeroes.length; j++) {
+        gradeBreakDownModal += '<tr>';
+        gradeBreakDownModal += '<td>' + categories[i].name + '</td><td>' + categories[i].zeroes[j].date + '</td><td>' + categories[i].zeroes[j].assignmentName + '</td><td style="color:red">0</td><td>' + categories[i].zeroes[j].total + '</td>';
+        gradeBreakDownModal += '</tr>';
+      }
+    }
+    gradeBreakDownModal += '</tbody>';
+    gradeBreakDownModal += '</table>';
+  }
+  gradeBreakDownModal += '<hr/><h4>Highest Scores (by Category)</h4><hr/>';
+  gradeBreakDownModal += '<table id="zeroBreakdownTable" class="table table-hover text-center">';
+  gradeBreakDownModal += '<thead>';
+  gradeBreakDownModal += '<tr>';
+  gradeBreakDownModal += '<th class="text-center">Category</th><th class="text-center">Date</th><th class="text-center">Assignment Name</th><th class="text-center">Score</th><th class="text-center">Received (pts)</th><th class="text-center">Total (pts)</th>';
+  gradeBreakDownModal += '</tr></thead>';
+  gradeBreakDownModal += '<tbody>';
+  for (var i = 0; i < categories.length; i++) {
+    for (var j = 0; j < categories[i].zeroes.length; j++) {
+      gradeBreakDownModal += '<tr>';
+      gradeBreakDownModal += '<td>' + categories[i].name + '</td><td>' + categories[i].zeroes[j].date + '</td><td>' + categories[i].zeroes[j].assignmentName + '</td><td><mark><strong>0%</strong></mark></td><td style="color:red">0</td><td>' + categories[i].zeroes[j].total + '</td>';
+      gradeBreakDownModal += '</tr>';
+    }
+  }
+  gradeBreakDownModal += '</tbody>';
+  gradeBreakDownModal += '</table>';
+  gradeBreakDownModal += '<p><strong>TOTAL:</strong></p>';
+  var totalScore = 0;
+  var totalWeight = getTotalWeightOfCategories();
+  for (var i = 0; i < categories.length; i++) {
+    totalScore += categories[i].score * (categories[i].weight / totalWeight);
+    if (i == categories.length - 1) {
+      gradeBreakDownModal += "<p>" + categories[i].score + " * (" + categories[i].weight + " / " + totalWeight + ") = <mark><strong>" + roundNumber(totalScore, 2) + "%</strong></mark></p>";
+    } else {
+      gradeBreakDownModal += "<p>" + categories[i].score + " * (" + categories[i].weight + " / " + totalWeight + ") = " + totalScore + " + </p>";
+    }
+  }
+  gradeBreakDownModal += '<hr/><h4>More detailed breakdown coming soon...</h4>';
+  gradeBreakDownModal += '</div>';
+  gradeBreakDownModal += '<div class="modal-footer">';
+  gradeBreakDownModal += '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>';
+  gradeBreakDownModal += '</div>';
+  gradeBreakDownModal += '</div><!-- /.modal-content -->';
+  gradeBreakDownModal += '</div><!-- /.modal-dialog -->';
+  gradeBreakDownModal += '</div><!-- /.modal -->';
+
+  $("body").append(gradeBreakDownModal);
 }
 
 function addSortDropdown() {
@@ -231,8 +325,6 @@ function sortByPercent(type) {
     }
   }
 
-  console.log(htmlArray);
-
   $('.hub_general > tbody').html("");
 
   for (var k = 0; k < htmlArray.length; k++) {
@@ -243,9 +335,7 @@ function sortByPercent(type) {
     }
   }
 
-  $("#errorAlert").fadeIn();
-  $("#errorAlert").removeClass();
-  $("#errorAlert").addClass("alert alert-success");
+  $("#errorAlert").fadeIn().removeClass().addClass("alert alert-success");
   $("#error").html("Grades have been sorted by percentage (" + type + ")");
 
 }
@@ -263,7 +353,6 @@ function sortByCategory() {
 
     sectionObject.name = categories[t].name;
     sectionObject.htmlArray = [];
-
     categorySections.push(sectionObject);
 
     for (var l = 1; l < numRows; l++) {
@@ -282,9 +371,7 @@ function sortByCategory() {
         sectionObject.htmlArray.push(category.parent().parent().html().trim());
       } else {
         if (count > categories.length) {
-          $("#errorAlert").fadeIn();
-          $("#errorAlert").removeClass();
-          $("#errorAlert").addClass("alert alert-danger");
+          $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
           $("#error").html("An error occurred. Please try again later.");
         }
       }
@@ -303,9 +390,7 @@ function sortByCategory() {
     }
   }
 
-  $("#errorAlert").fadeIn();
-  $("#errorAlert").removeClass();
-  $("#errorAlert").addClass("alert alert-success");
+  $("#errorAlert").fadeIn().removeClass().addClass("alert alert-success");
   $("#error").html("Grades have been sorted by category.");
 }
 
@@ -340,10 +425,8 @@ function checkForCategoryTable() {
 
     if (numColumns < 3) {
       CATEGORY_TABLE_EXISTS = false;
-      $("#errorAlert").fadeIn();
-      $("#errorAlert").removeClass();
-      $("#errorAlert").addClass("alert alert-warning");
-      $("#error").html("<strong>Warning:</strong> No category weightages were found, so all calculations will be unweighted.");
+      $("#errorAlert").fadeIn().removeClass().addClass("alert alert-warning");
+      $("#error").html("<strong>Warning:</strong> No category weightages were found. <strong>This is just a warning, so you may still make unweighted calculations.</strong>");
     } else {
       //If category box does exist
       CATEGORY_TABLE_EXISTS = true;
@@ -409,16 +492,13 @@ function init() {
         console.log("Score Percent: " + scorePercent);
 
         categoryObject.score = scorePercent;
-
         categoryObject.received = 0;
         categoryObject.total = 0;
 
         user.insertCategory(categoryObject);
 
       } catch (err) {
-        $("#errorAlert").fadeIn();
-        $("#errorAlert").removeClass();
-        $("#errorAlert").addClass("alert alert-danger");
+        $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
         $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
 
         throw err;
@@ -449,7 +529,8 @@ function updateCategoryOptions() {
 }
 
 function addAssignmentTableContent() {
-  var content = '<select style="margin-bottom: 10px" class="form-control" id="changeCalculator">';
+  var content = '<a style="color: black;" data-toggle="modal" data-target=".bs-example-modal-lg" class="btn btn-default" id="breakdownGrade" href="#">See Grade Breakdown <span style="color: red">(new!)</span></a>   <span>Finals are coming up soon! Need a finals grade calculator? Switch to the finals grade calculator below!</span><br/><br/>';
+  content += '<select style="margin-bottom: 10px" class="form-control" id="changeCalculator">';
   if (CALCULATOR_TYPE == "Add Assignment") {
     //Regular Grade Calculator
     content += '<option value="Add Assignment">Add Assignment</option>';
@@ -540,16 +621,11 @@ $(".content_spacing_sm").on('click', '#calculateFinals', function(e) {
     var gradeNeeded = ((100 * desiredGrade) - ((100 - finalWorth) * receivedGrade)) / finalWorth;
 
     $("#error").html("You need " + roundNumber(gradeNeeded, 2) + "% on your final to get an overall grade of " + desiredGrade + "%.");
-    $("#errorAlert").removeClass();
-    $("#errorAlert").addClass("alert alert-success");
-    $("#errorAlert").fadeIn();
+    $("#errorAlert").removeClass().addClass("alert alert-success").fadeIn();
     $("#setAlert").removeClass();
-
   } catch (e) {
     $("#error").html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>  Please fill all the fields.');
-    $("#errorAlert").removeClass();
-    $("#errorAlert").addClass("alert alert-danger");
-    $("#errorAlert").fadeIn();
+    $("#errorAlert").removeClass().addClass("alert alert-danger").fadeIn();
     $("#setAlert").addClass("danger");
   }
 });
@@ -630,11 +706,11 @@ function changeCategoriesUI() {
 $("#addCategory").click(function(e) {
   e.preventDefault();
 
-
   var categories = user.getAllCategories();
 
   if (NEW_CATEGORIES < 1) {
     var totalWeight = getTotalWeightOfCategories();
+
 
     NEW_CATEGORIES++;
 
@@ -646,22 +722,23 @@ $("#addCategory").click(function(e) {
       categoryContent += '<td class="list_text categoryGrade" nowrap>100%</td>';
       categoryContent += '</tr>';
 
-      var categoryTableBody = $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").html();
+      var nth_child = 3;
 
-      if (categoryTableBody != undefined) {
-        //If zero box doesn't exist
-        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").append(categoryContent);
+      if (ZERO_TABLE_EXISTS) {
+        nth_child = 5;
       } else {
-        //If zero box doesn't exist
-        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody").append(categoryContent);
+        nth_child = 3;
       }
+
+      $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(" + nth_child + ") > div.module_content > table > tbody").append(categoryContent);
+
 
     } else {
       $("#catAlert").fadeIn();
       $("#catError").html("All weightages add up to 100%. You may not add more categories.");
 
     }
-    $(".deleteCatRow").click(function(e) {
+    $(document).on('click', '.deleteCatRow', function(e) {
       e.preventDefault();
       NEW_CATEGORIES--;
       var catName = $(this).parent().parent().children().eq(1).text();
@@ -756,7 +833,7 @@ $(".content_spacing_sm").on('click', '#add', function(e) {
   }
 
   rowContent += '<td>';
-  rowContent += '<a style="color: black; font-size: 1.3em;" class="center-block btn btn-default btn-sm deleteRow" id="deleteRowNew" href="#">&times;</a>';
+  rowContent += '<a style="color: black; font-size: 1.3em;" class="center-block btn btn-default btn-sm deleteRow" href="#">&times;</a>';
   rowContent += '</td>';
   rowContent += '<td>';
   rowContent += '<div class="float_l padding_r5" style="min-width: 105px;">';
@@ -789,24 +866,15 @@ $(".content_spacing_sm").on('click', '#add', function(e) {
     rowContent += '</td>';
     $(".general_body").prepend(rowContent);
     calculateFinalGrade();
-    $("#deleteRowNew").click(function(e) {
-      e.preventDefault();
-      $(this).parent().parent().fadeOut(500, function() {
-        $(this).remove();
-        calculateFinalGrade();
-      });
-    });
   } else {
-    $("#errorAlert").fadeIn();
-    $("#errorAlert").removeClass();
-    $("#errorAlert").addClass("alert alert-danger");
+    $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
     $("#error").html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>  Please fill all the fields.');
     $("#setAlert").addClass("danger");
   }
 
 });
 
-$(".deleteRow").click(function(e) {
+$(document).on('click', '.deleteRow', function(e) {
   e.preventDefault();
   $(this).parent().parent().fadeOut(300, function() {
     $(this).remove();
@@ -873,6 +941,65 @@ function addCategoryDeleteColumn() {
 
 function calculateFinalGrade() {
 
+  var categoryInfo = populateCategoryInfo();
+  var totalPoints = categoryInfo[0];
+  var totalReceivedPoints = categoryInfo[1];
+
+  var categories = user.getAllCategories();
+
+  var finalAnswer = 0;
+
+  if (CATEGORY_TABLE_EXISTS) {
+
+    setCorrectCategoryWeights();
+
+    for (var r = 0; r < categories.length; r++) {
+      //console.log(categories[r - 1].name + ": " + categories[r - 1].score);
+      //console.log(categories[r - 1].name + ": " + categories[r - 1].weight);
+
+      finalAnswer += categories[r].score * (categories[r].weight / 100);
+
+      //Setting each category percentage
+      var categoryScoreArea = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").html();
+
+      if (categoryScoreArea != undefined) {
+        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").html("" + roundNumber(categories[r].score, 2) + "%");
+        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").addClass("animated bounceIn");
+      } else {
+        $('#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 2) + ') > td:nth-child(4)').html("" + roundNumber(categories[r].score, 2) + "%");
+        $('#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 2) + ') > td:nth-child(4)').addClass("animated bounceIn");
+      }
+
+    }
+
+  } else {
+    //If Categories don't exist
+
+    categories[0].received = totalReceivedPoints;
+    categories[0].total = totalPoints;
+
+    finalAnswer = roundNumber(((categories[0].received / categories[0].total) * 100), 2);
+
+    categories[0].score = finalAnswer;
+
+  }
+  //Setting the final percentage
+  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(4)").html(roundNumber(finalAnswer, 2) + "%");
+  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(4)").addClass("animated bounceIn");
+
+  //Setting the final letter grade
+  var letter = getLetterGrade(finalAnswer);
+
+  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").html(letter);
+  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").addClass("animated bounceIn");
+
+  console.log("Total: " + roundNumber(finalAnswer, 2));
+
+  return roundNumber(finalAnswer, 2);
+
+}
+
+function populateCategoryInfo() {
   var categories = user.getAllCategories();
 
   var totalPoints = 0; //Overall number of points (Denominator)
@@ -884,6 +1011,10 @@ function calculateFinalGrade() {
     categories[i].received = 0;
 
     categories[i].total = 0;
+
+    categories[i].extra_credit = 0;
+
+    categories[i].zeroes = [];
 
   }
 
@@ -908,9 +1039,7 @@ function calculateFinalGrade() {
         categories[p].weight = weightPercent;
 
       } catch (err) {
-        $("#errorAlert").fadeIn();
-        $("#errorAlert").removeClass();
-        $("#errorAlert").addClass("alert alert-danger");
+        $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
         $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
 
         throw err;
@@ -966,6 +1095,13 @@ function calculateFinalGrade() {
     if (CATEGORY_TABLE_EXISTS) {
       //Assignment Category
       var category = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_left > table > tbody > tr:nth-child(" + l + ") > td:nth-child(2) > div").html().trim();
+      var assignmentName = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_left > table > tbody > tr:nth-child(" + l + ") > td:nth-child(2) > div > a").text().trim();
+
+      var date = "";
+
+      if (typeof $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_left > table > tbody > tr:nth-child(" + l + ") > td:nth-child(4)") !== 'undefined') {
+        date = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_left > table > tbody > tr:nth-child(" + l + ") > td:nth-child(4)").html().trim();
+      }
 
       var count = 0;
 
@@ -981,11 +1117,25 @@ function calculateFinalGrade() {
 
         if (category == categories[t].name) {
           categories[t].received += parseFloat(receivedTotal);
+
+          if (parseFloat(receivedTotal) == 0) {
+            categories[t].zeroes.push({
+              "assignmentName": assignmentName,
+              "total": assignmentTotal,
+              "date": date
+            });
+          }
+
           console.log(categories[t]);
 
           console.log(categories[t].name + ":" + receivedTotal + " / " + assignmentTotal);
 
           categories[t].total += parseFloat(assignmentTotal);
+
+
+          if (parseFloat(receivedTotal) > parseFloat(assignmentTotal)) {
+            categories[t].extra_credit += (parseFloat(receivedTotal) - parseFloat(assignmentTotal));
+          }
 
           $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (t + 1) + ") > td:nth-child(4)").attr("data-toggle", "tooltip");
           $("#container_content > div.content_margin > table:nth-child(6) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (t + 1) + ") > td:nth-child(4)").attr("title", categories[t].received + " / " + categories[t].total);
@@ -994,9 +1144,7 @@ function calculateFinalGrade() {
 
         } else {
           if (count > categories.length) {
-            $("#errorAlert").fadeIn();
-            $("#errorAlert").removeClass();
-            $("#errorAlert").addClass("alert alert-danger");
+            $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
             $("#error").html("An error occurred. Please try again later.");
           }
         }
@@ -1004,57 +1152,7 @@ function calculateFinalGrade() {
     }
   } //Big For Loop End
 
-  var finalAnswer = 0;
-
-  if (CATEGORY_TABLE_EXISTS) {
-
-    setCorrectCategoryWeights();
-
-    for (var r = 0; r < categories.length; r++) {
-      //console.log(categories[r - 1].name + ": " + categories[r - 1].score);
-      //console.log(categories[r - 1].name + ": " + categories[r - 1].weight);
-
-      finalAnswer += categories[r].score * (categories[r].weight / 100);
-
-      //Setting each category percentage
-      var categoryScoreArea = $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").html();
-
-      if (categoryScoreArea != undefined) {
-        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").html("" + roundNumber(categories[r].score, 2) + "%");
-        $("#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(3) > div.module_content > table > tbody > tr:nth-child(" + (r + 2) + ") > td:nth-child(4)").addClass("animated bounceIn");
-      } else {
-        $('#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 2) + ') > td:nth-child(4)').html("" + roundNumber(categories[r].score, 2) + "%");
-        $('#container_content > div.content_margin > table:nth-child(9) > tbody > tr > td.home_right > div:nth-child(5) > div.module_content > table > tbody > tr:nth-child(' + (r + 2) + ') > td:nth-child(4)').addClass("animated bounceIn");
-      }
-
-    }
-
-  } else {
-    //If Categories don't exist
-
-    categories[0].received = totalReceivedPoints;
-    categories[0].total = totalPoints;
-
-    finalAnswer = roundNumber(((categories[0].received / categories[0].total) * 100), 2);
-
-    categories[0].score = finalAnswer;
-
-  }
-
-  //Setting the final percentage
-  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(4)").html(roundNumber(finalAnswer, 2) + "%");
-  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(4)").addClass("animated bounceIn");
-
-  //Setting the final letter grade
-  var letter = getLetterGrade(finalAnswer);
-
-  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").html(letter);
-  $("#container_content > div.content_margin > table:nth-child(7) > tbody > tr:nth-child(2) > td:nth-child(1) > b:nth-child(2)").addClass("animated bounceIn");
-
-  console.log("Total: " + roundNumber(finalAnswer, 2));
-
-  return roundNumber(finalAnswer, 2);
-
+  return [totalPoints, totalReceivedPoints]
 }
 
 function decodeHTMLEntities(str) {
@@ -1103,9 +1201,7 @@ function setCorrectCategoryWeights() {
   var totalWeight = getTotalWeightOfCategories();
 
   if (totalWeight != 100) {
-    $("#errorAlert").fadeIn();
-    $("#errorAlert").removeClass();
-    $("#errorAlert").addClass("alert alert-warning");
+    $("#errorAlert").fadeIn().removeClass().addClass("alert alert-warning");
     $("#error").html("<strong><span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span> Warning: </strong>Your category weights don't add up to 100%. Please add a category or consult your teacher.");
   }
 
@@ -1142,9 +1238,7 @@ function getTotalWeightOfCategories() {
       totalWeight += weightPercent;
 
     } catch (err) {
-      $("#errorAlert").fadeIn();
-      $("#errorAlert").removeClass();
-      $("#errorAlert").addClass("alert alert-danger");
+      $("#errorAlert").fadeIn().removeClass().addClass("alert alert-danger");
       $("#error").html("Not able to receive grades at this time. Possible Reasons for errors: No weightages (no weightage column), error in categories. Please talk to your teachers about your weightages, try again later or contact developer at sguduguntla11@gmail.com.");
 
       throw err;
@@ -1156,8 +1250,8 @@ function getTotalWeightOfCategories() {
 }
 
 function roundNumber(rnum, rlength) {
-  var newnumber = Math.round(rnum * Math.pow(10, rlength)) / Math.pow(10, rlength);
-  return newnumber;
+  var roundedNum = Math.round(rnum * Math.pow(10, rlength)) / Math.pow(10, rlength);
+  return roundedNum;
 }
 
 function getDateToday() {
