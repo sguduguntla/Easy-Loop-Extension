@@ -1,7 +1,7 @@
 Easy Loop Chrome Extension for Schoolloop
 v2.1.8.0
 ================================
-![Easyloop banner]("https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png")
+<img src="https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png">
 
 ![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Build Passing](https://img.shields.io/badge/build-passing-brightgreen.svg)
