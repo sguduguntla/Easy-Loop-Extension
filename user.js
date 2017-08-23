@@ -27,9 +27,51 @@ User.prototype.insertName = function(categoryName, name) {
   });
 }
 
+User.prototype.insertLowScore = function(categoryName, score) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      category.low_score = score;
+      console.log("LOOWWW SCORE:", category.low_score);
+    }
+  });
+}
+
+User.prototype.insertHighScore = function(categoryName, score) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      category.high_score = score;
+    }
+  });
+}
+
+User.prototype.insertExtraCredit = function(categoryName, extra_credit) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      category.extra_credit = extra_credit;
+    }
+  });
+}
+
+User.prototype.insertZeroes = function(categoryName, zeroes) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      category.zeroes = zeroes;
+    }
+  });
+}
+
+User.prototype.addZero = function(categoryName, zero) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      category.zeroes.push(zero);
+    }
+  });
+}
+
 User.prototype.insertReceived = function(categoryName, received) {
   this.categories.forEach(function(category) {
     if (category.name == categoryName) {
+        console.log("RECEIVED", received);
       category.received = received;
     }
   });
@@ -95,6 +137,22 @@ User.prototype.getWeight = function(categoryName, callback) {
   this.categories.forEach(function(category) {
     if (category.name == categoryName) {
       callback(category.weight);
+    }
+  });
+}
+
+User.prototype.getLowScore = function(categoryName, callback) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      callback(category.low_score);
+    }
+  });
+}
+
+User.prototype.getHighScore = function(categoryName, callback) {
+  this.categories.forEach(function(category) {
+    if (category.name == categoryName) {
+      callback(category.high_score);
     }
   });
 }

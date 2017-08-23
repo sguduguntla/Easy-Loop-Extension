@@ -1109,6 +1109,8 @@ function populateCategoryInfo() {
             "score": 0
         };
 
+        categories[i].score = 100;
+
     }
 
     if (CATEGORY_TABLE_EXISTS) {
