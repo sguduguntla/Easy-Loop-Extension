@@ -1,5 +1,5 @@
 Easy Loop Chrome Extension for Schoolloop
-v2.1.8.0
+v2.1.8.1
 ================================
 <img src="https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png" width=460 height=340>
 
