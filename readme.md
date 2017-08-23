@@ -1,5 +1,6 @@
 Easy Loop Chrome Extension for Schoolloop
 ================================
+v2.1.8.0
 <img src="https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png" width="460" height="340">
 
 An extension that enhances the schoolloop interface to allow easy grade calculation.
@@ -19,21 +20,25 @@ Easy Loop 2.0 Features:
 
  - Add and delete assignments
  - Add new weightage categories
+ - Grade Breakdown by Category (NEW!)
+ - Editable Grades with ability to recalculate grade at the click of a button (NEW!)
+ - THEMES: Easy Loop, Modern Light, Modern Dark, Sweet Maroon (NEW!)
  - Calculate final and category grades within seconds, etc.
  - Finals Grade Calculator
- - Enable & Disable Easy Loop (New!)
- - Calculate grades for classes without categories (New!)
- - Sort grades by category, score, etc. (New!)
- - Visual customization (New!)
+ - Enable & Disable Easy Loop
+ - Calculate grades for classes without categories
+ - Sort grades by category, score, etc.
+ - Visual customization
  - Enhance the visual appearance of Schoolloop 
 
 Easy Loop will provide you the features that only your teachers are essentially permitted. Therefore, be your teacher today and calculate your grade within seconds! 
 
 Please await further updates including a
 
- - Ability to delete existing categories, etc. 
- - Grade breakdown summary
+ - More themes 
+ - More indepth grade breakdown
  - More sorting types
+ - Grade Tracker/Advisor
 
 Email me at sguduguntla11@gmail.com for any questions, concerns, or comments. Leave suggestions or report any issues at:
 
