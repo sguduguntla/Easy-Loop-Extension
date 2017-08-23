@@ -3,6 +3,8 @@ v2.1.8.0
 ================================
 <img src="https://github.com/sguduguntla/Easy-Loop-Extension/blob/master/images/easyloop-banner-920x680.png" width="460" height="340">
 
+<img sec="https://camo.githubusercontent.com/890acbdcb87868b382af9a4b1fac507b9659d9bf/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4d49542d626c75652e737667">
+
 An extension that enhances the schoolloop interface to allow easy grade calculation.
 
 Website Link: http://www.sriharshaguduguntla.com/easyloop  
