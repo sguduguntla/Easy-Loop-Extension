@@ -19,7 +19,7 @@ How to Disable Extensions Temporarily:
 2.) Select More tools > Extensions.  
 3.) To turn off an extension, uncheck the Enabled box. Check the box to turn it on.  
 
-Easy Loop 2.0 Features:  
+Easy Loop 3.0 Features:  
 
  - Add and delete assignments
  - Add new weightage categories

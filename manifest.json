@@ -1,12 +1,9 @@
 {
   "name": "School Loop Easy Loop",
   "short_name": "Easy Loop",
-  "version": "2.1.8.1",
+  "version": "3.1",
   "description": "An extension that enhances the schoolloop interface to allow easy grade calculation",
   "manifest_version": 2,
-  "background": {
-    "scripts": ["back_script.js"]
-  },
   "permissions": [
     "activeTab"
   ],
@@ -15,18 +12,19 @@
     "48": "images/easyloop-icon48.png",
     "128": "images/easyloop-icon128.png"
   },
+  "web_accessible_resources": ["images/easyloop-logo.png"],
   "browser_action": {
     "name": "Make grade calculation easier!",
     "default_icon": "images/easyloop-logo.png",
     "default_popup": "website/index.html"
   },
   "content_scripts": [{
-    "js": ["jquery-1.11.3.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js", "user.js", "background.js"],
-    "css": ["customStyles.css", "animate.css"],
-    "matches": ["http://*.schoolloop.com/progress_report/*", "https://*.schoolloop.com/progress_report/*"]
+    "js": ["jquery-3.3.1.min.js", "bootstrap/js/bootstrap.min.js", "user.js", "background.js"],
+    "css": ["bootstrap/css/bootstrap.min.css"],
+    "matches": ["https://*.schoolloop.com/progress_report/*"]
   }, {
-    "matches": ["https://*.schoolloop.com/portal/student_home"],
-    "css": ["customStyles.css", "animate.css", "jquery-ui.min.css", "jquery-ui.theme.min.css"],
-    "js": ["jquery-1.11.3.min.js", "jquery-ui.min.js", "angular.min.js", "bootstrap/js/bootstrap.min.js", "background2.js"]
+    "matches": ["https://*.schoolloop.com/*"],
+    "css": ["bootstrap/css/bootstrap.min.css", "animate.css", "sweetalert2.min.css"],
+    "js": ["jquery-3.3.1.min.js", "sweetalert2.min.js", "bootstrap/js/bootstrap.min.js", "init.js", "theme_generator.js"]
   }]
 }
